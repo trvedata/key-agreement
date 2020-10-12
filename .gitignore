@@ -1,0 +1,10 @@
+# Gradle specifics
+.gradle
+gradle.properties
+
+# Java specifics
+build/
+gen-java/
+
+# IDE specifics
+.idea

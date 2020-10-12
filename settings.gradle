@@ -1,0 +1,4 @@
+rootProject.name = 'java_prototype'
+
+include 'group_protocol_library'
+include 'cli_demo_local'

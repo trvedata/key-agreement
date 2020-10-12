@@ -1,0 +1,36 @@
+plugins {
+    id 'java'
+    id "org.jruyi.thrift" version "0.4.1"
+}
+
+java {
+    sourceCompatibility = 'VERSION_1_8'
+    targetCompatibility = 'VERSION_1_8'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'org.zeromq:curve25519-java:0.1.0'
+    implementation 'org.apache.thrift:libthrift:0.12.0'
+    implementation 'org.apache.commons:commons-lang3:3.9'
+    implementation 'org.slf4j:slf4j-nop:1.7.28'
+    implementation 'org.apache.commons:commons-collections4:4.4'
+    implementation 'org.assertj:assertj-core:3.11.1'
+    implementation 'org.pcollections:pcollections:3.1.3'
+
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.assertj:assertj-core:3.11.1'
+}
+
+compileThrift {
+    sourceItems = [file('src/main/java/org/trvedata/sgm/message')]
+    outputDir = file('src/generated/thrift')
+    generator 'java', 'private-members'
+}
+
+sourceSets {
+    main.java.srcDirs += 'src/generated/thrift/gen-java'
+}
