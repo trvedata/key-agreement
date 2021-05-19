@@ -129,17 +129,18 @@ public class EvaluationSimulation {
         for (final ThreadedClient client : clients) client.start();
 
         // OPERATION
-        for (final ThreadedClient client : receivers) client.clearNextOperation();
+        for (final ThreadedClient client : clients) client.clearNextOperation();
         metrics.operationBegin();
 
         switch (params.operation) {
             case MESSAGE:
-                for (final ThreadedClient client : receivers) client.expectNextOperation(1);
+                for (final ThreadedClient client : receivers) client.expectNextOperation(1);// sender excluded
+                sender.expectNextOperation(0);
                 sender.sendMessage("0123456789ABCDEF0123456789ABCDEF"); // 32 byte e.g. AES key
                 break;
 
             case ADD:
-                for (final ThreadedClient client : receivers) client.expectNextOperation(params.groupsize);
+                for (final ThreadedClient client : clients) client.expectNextOperation(params.groupsize);
                 // Create added client ourselves instead of using DsgmClientFactory, so we can give it the
                 // pre-made prekeys.
                 final DsgmClient dsgmClient = new DsgmClient(network, toAddPreKeySecret, preKeySource, "NewMember",
@@ -156,7 +157,7 @@ public class EvaluationSimulation {
 
             case REMOVE:
                 final ThreadedClient toBeRemoved = receivers.get(0);
-                for (final ThreadedClient client : receivers) {
+                for (final ThreadedClient client : clients) {
                     if (client != toBeRemoved) client.expectNextOperation(params.groupsize - 2);
                 }
                 toBeRemoved.expectNextOperation(1);
@@ -166,12 +167,13 @@ public class EvaluationSimulation {
                 break;
 
             case UPDATE:
-                for (final ThreadedClient client : receivers) client.expectNextOperation(params.groupsize - 1);
+                for (final ThreadedClient client : clients) client.expectNextOperation(params.groupsize - 1);
                 sender.update();
                 break;
         }
 
-        for (final ThreadedClient client : receivers) client.waitUntilNextOperationFinished(params.operation);
+        for (final ThreadedClient client : receivers) client.waitUntilNextOperationFinished(params.operation);// sender excluded
+        sender.waitUntilNextOperationFinishedSender();
 
         // CLEAN-UP
         for (final ThreadedClient client : clients) client.stop();

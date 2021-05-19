@@ -39,3 +39,4 @@ To run the full evaluation used in our paper, do:
 ```
 $ ./run_evaluation.sh <csvOutputFolder>
 ```
+(relative paths use the working directory cli\_demo\_local/).

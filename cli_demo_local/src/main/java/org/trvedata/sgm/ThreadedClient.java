@@ -184,6 +184,17 @@ public class ThreadedClient extends Client implements Runnable, DsgmClient.DsgmL
         countExpectedMessagesLatch.await();
     }
 
+    /**
+     * Waits for the current operation to finish, for the operation's initiator, assuming that
+     * expectNextOperation has been called with the number of acks to expect from recipients.
+     * Unlike waitUntilNextOperationFinished, we don't verify the actual operation, since it
+     * is necessarily correct, and the send methods don't result in calls to the listener methods
+     * below (onUpdate, etc.).
+     */
+    public void waitUntilNextOperationFinishedSender() throws InterruptedException {
+        countExpectedMessagesLatch.await();
+    }
+
     @Override
     public String toString() {
         return mName;
